@@ -9,12 +9,10 @@ import '../quizTest/quizTest.dart';
 
 class ResultPage extends StatelessWidget {
   final int correct;
-  final int incorrect;
   final int time;
 
   const ResultPage(
       {required this.correct,
-      required this.incorrect,
       required this.time,
       Key? key})
       : super(key: key);
@@ -129,7 +127,7 @@ class ResultPage extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  "$incorrect",
+                                  "${10-correct}",
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: size.width * 0.048,
@@ -177,7 +175,7 @@ class ResultPage extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            "${correct * 100 / (correct + incorrect)}",
+                            "${correct * 10}",
                             style: TextStyle(
                               fontSize: size.width * 0.077,
                               fontWeight: FontWeight.w700,
@@ -198,7 +196,7 @@ class ResultPage extends StatelessWidget {
             child: AnswersButton(
               text: "Play again",
               a: "javob",
-              onTap: () {
+              onTap: (text, a) {
                 int rand() {
                   return Random().nextInt(50);
                 }
@@ -211,7 +209,7 @@ class ResultPage extends StatelessWidget {
                   }
                   list.add(random);
                 }
-                Navigator.push(
+                Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: (context) => QuizTest(
@@ -221,20 +219,18 @@ class ResultPage extends StatelessWidget {
                     ));
                 print(list);
               },
-              index: 11,
-              time: time,
             ),
           ),
           AnswersButton(
             text: "Home",
             a: "javob",
-            onTap: () => Navigator.push(
+            onTap: (text,a) {
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => HomePage(),
-                )),
-            index: 11,
-            time: time,
+                ));
+            },
           ),
         ],
       ),
