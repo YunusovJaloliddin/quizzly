@@ -3,14 +3,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:quizly/common/constants/colors.dart';
 import 'package:quizly/common/screens/data/database.dart';
+import 'package:quizly/common/screens/result/resultPage.dart';
 
 import '../depends/answersButton.dart';
 
 class QuizTest extends StatefulWidget {
-  List<int> list;
-  int time;
+  final List<int> list;
+  final int time;
 
-  QuizTest({required this.list, required this.time, Key? key});
+  const QuizTest({required this.list, required this.time, Key? key});
 
   @override
   State<QuizTest> createState() => _QuizTestState();
@@ -18,10 +19,37 @@ class QuizTest extends StatefulWidget {
 
 class _QuizTestState extends State<QuizTest> {
   Timer? timer1;
+  ValueNotifier<int> correct=ValueNotifier<int>(0);
 
   ValueNotifier<int> timer = ValueNotifier<int>(0);
 
   ValueNotifier<int> index = ValueNotifier<int>(0);
+
+  void onTap() {
+    index.value++;
+    timer.value = widget.time;
+    if (index.value >= 10) {
+      timer1?.cancel();
+    }
+  }
+
+  void answersTap(String text, String a){
+    if (text == a) {
+      correct.value++;
+    }
+    if (index.value == 9) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ResultPage(
+            correct: correct.value,
+            time: widget.time,
+          ),
+        ),
+      );
+    }
+    onTap();
+  }
 
   void startTime() {
     timer1 = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -32,6 +60,7 @@ class _QuizTestState extends State<QuizTest> {
         timer.value = widget.time;
         index.value++;
         if (index.value >= 10) {
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ResultPage(correct: correct.value,time: widget.time,),));
           timer1?.cancel();
         }
       }
@@ -52,14 +81,6 @@ class _QuizTestState extends State<QuizTest> {
 
   @override
   Widget build(BuildContext context) {
-    void onTap() {
-      index.value++;
-      timer.value = widget.time;
-      if (index.value >= 10) {
-        timer1?.cancel();
-      }
-    }
-
     final size = MediaQuery.sizeOf(context);
 
     return Scaffold(
@@ -210,9 +231,7 @@ class _QuizTestState extends State<QuizTest> {
                             .value]]["javoblar"] as List<num>)[0]}",
                         a: question[widget.list[index.value]]["javob"]
                             .toString(),
-                        onTap: onTap,
-                        index: index.value,
-                        time: widget.time,
+                        onTap: answersTap,
                       ),
                     ),
                     Padding(
@@ -223,9 +242,7 @@ class _QuizTestState extends State<QuizTest> {
                             num>)[1]}",
                         a: question[widget.list[index.value]]["javob"]
                             .toString(),
-                        onTap: onTap,
-                        index: index.value,
-                        time: widget.time,
+                        onTap: answersTap,
                       ),
                     ),
                     Padding(
@@ -237,18 +254,14 @@ class _QuizTestState extends State<QuizTest> {
                             num>)[2]}",
                         a: question[widget.list[index.value]]["javob"]
                             .toString(),
-                        onTap: onTap,
-                        index: index.value,
-                        time: widget.time,
+                        onTap: answersTap,
                       ),
                     ),
                     AnswersButton(
                       text:
                       "${(question[widget.list[index.value]]["javoblar"] as List<num>)[3]}",
                       a: question[widget.list[index.value]]["javob"].toString(),
-                      onTap: onTap,
-                      index: index.value,
-                      time: widget.time,
+                      onTap: answersTap,
                     ),
                   ],
                 );
